@@ -38,7 +38,8 @@ class TwigFilterFactory
 
         if (! is_array($filter) && ! is_callable($filter)) {
             throw new Exception\InvalidConfigException(
-                'Key "filter" of a twig filter config should be a callable, native function or fully qualified class name'
+                'Key "filter" of a twig filter config should be a callable, '
+                . 'native function or fully qualified class name'
             );
         }
 

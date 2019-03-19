@@ -66,11 +66,13 @@ class TwigFilterFactoryTest extends TestCase
             ],
             [
                 [ 'name' => 'bar', 'filter' => true ],
-                'Key "filter" of a twig filter config should be a callable, native function or fully qualified class name'
+                'Key "filter" of a twig filter config should be a callable, '
+                 . 'native function or fully qualified class name'
             ],
             [
                 [ 'name' => 'bar', 'filter' => 42 ],
-                'Key "filter" of a twig filter config should be a callable, native function or fully qualified class name'
+                'Key "filter" of a twig filter config should be a callable, '
+                . 'native function or fully qualified class name'
             ],
         ];
     }
