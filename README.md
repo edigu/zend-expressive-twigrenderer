@@ -122,6 +122,9 @@ Optional configuration can be stored in `config/autoload/templates.global.php`.
     'extensions' => [
         // extension service names or instances
     ],
+    'filters' => [
+        // user defined filters
+    ],
     'runtime_loaders' => [
         // runtime loaders names or instances   
     ],

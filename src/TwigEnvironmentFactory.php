@@ -58,6 +58,12 @@ use function sprintf;
  *     'runtime_loaders' => [
  *         // runtime loaders names or instances
  *     ],
+ *     'filters' => [
+ *          // user defined filters
+ *          ['name' => 'greet', 'filter' => function($a) { return 'Hello ' . $a; } ],
+ *          ['name' => 'mul', 'filter' => 'Math::multiply', 'options' => ['needs_context' => true] ],
+ *          ['name' => 'uglify', 'filter' => \Lib\Twig\Filter\Uglify::class ],
+ *      ],
  *     'globals' => [
  *         // Global variables passed to twig templates
  *         'ga_tracking' => 'UA-XXXXX-X'
@@ -145,6 +151,12 @@ class TwigEnvironmentFactory
             ? $config['runtime_loaders']
             : [];
         $this->injectRuntimeLoaders($environment, $container, $runtimeLoaders);
+
+        // Add user defined filters
+        $filters = isset($config['filters']) && is_array($config['filters'])
+            ? $config['filters']
+            : [];
+        $this->injectFilters($environment, $container, $filters);
 
         // Add template paths
         $allPaths = isset($config['paths']) && is_array($config['paths']) ? $config['paths'] : [];
@@ -253,5 +265,12 @@ class TwigEnvironmentFactory
         }
 
         return $runtimeLoader;
+    }
+
+    private function injectFilters(Environment $environment, ContainerInterface $container, array $filters): void
+    {
+        foreach ($filters as $filter) {
+            $environment->addFilter(TwigFilterFactory::createFilterFromConfig($container, $filter));
+        }
     }
 }

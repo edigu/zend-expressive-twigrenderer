@@ -18,6 +18,7 @@ use Twig\Extension\CoreExtension;
 use Twig\Extension\EscaperExtension;
 use Twig\Extension\OptimizerExtension;
 use Twig\RuntimeLoader\RuntimeLoaderInterface;
+use Twig\TwigFilter;
 use Zend\Expressive\Helper\ServerUrlHelper;
 use Zend\Expressive\Helper\UrlHelper;
 use Zend\Expressive\Twig\Exception\InvalidConfigException;
@@ -403,5 +404,40 @@ class TwigEnvironmentFactoryTest extends TestCase
 
         $this->assertTrue($environment->isAutoReload());
         $this->assertFalse($environment->isDebug());
+    }
+
+    public function testInjectsCustomFiltersIntoTwigEnvironment(): void
+    {
+        $config = [
+            'templates' => [],
+            'twig' => [
+                'filters' => [
+                    [
+                        'name' => 'bar',
+                        'filter' => function () {
+                        },
+                        'options' => [
+                            'needs_environment' => true,
+                        ]
+                    ],
+                ],
+            ],
+        ];
+        $this->container->has('config')->willReturn(true);
+        $this->container->get('config')->willReturn($config);
+        $this->container->has(TwigExtension::class)->willReturn(false);
+        $this->container->has(ServerUrlHelper::class)->willReturn(false);
+        $this->container->has(UrlHelper::class)->willReturn(false);
+
+        $factory = new TwigEnvironmentFactory();
+        $environment = $factory($this->container->reveal());
+
+        $expectedFilter = new TwigFilter(
+            'bar',
+            function () {
+            },
+            ['needs_environment' => true]
+        );
+        $this->assertEquals($expectedFilter, $environment->getFilter('bar'));
     }
 }
